@@ -1,0 +1,71 @@
+.PHONY: lock sync lint format mypy unit integration
+
+VENV := .venv
+ENV_RUNNER ?= uv
+SRC := recommendation_engine
+
+quickstart: init-venv run
+
+# --------------------------
+# Run (no-docker)
+# --------------------------
+
+run:
+	@$(ENV_RUNNER) run python $(SRC)/main.py
+
+# --------------------------
+# Init
+# --------------------------
+init-venv: .install-uv .create-venv update-venv .install-deps
+update-venv: lock sync
+
+lock:
+	@$(ENV_RUNNER) lock
+sync:
+	@$(ENV_RUNNER) sync --dev
+
+.install-uv:
+	pip install -U uv
+
+.create-venv:
+	@if [ -d "./.venv" ]; then \
+		echo ".venv python environment exists, skipping..."; \
+	else \
+		echo ".venv not found, Creating Python environment..."; \
+		UV_VENV_CLEAR=1 $(ENV_RUNNER) venv; \
+	fi
+
+.install-deps:
+	@$(ENV_RUNNER) pip install -e . --group dev
+
+# =========================
+# 		Code Quality
+# =========================
+
+quality-checks: format lint mypy
+
+lint:
+	@$(ENV_RUNNER) run ruff check . --fix
+lint-check:
+	@$(ENV_RUNNER) run ruff check .
+
+format:
+	@$(ENV_RUNNER) run ruff format .
+format-check:
+	@$(ENV_RUNNER) run ruff format . --check
+
+mypy:
+	@$(ENV_RUNNER) run mypy .
+
+# --------------------------
+# Tests
+# --------------------------
+tests: test-unit test-integration
+
+test-unit:
+	@$(ENV_RUNNER) run pytest -m unit
+test-unit-coverage:
+	@$(ENV_RUNNER) run pytest -m unit --cov --cov-report=term-missing --cov-report=html
+
+test-integration:
+	@$(ENV_RUNNER) run pytest -m integration
