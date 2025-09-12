@@ -1,10 +1,10 @@
 import pytest
 
+from dotenv import find_dotenv, load_dotenv
 
-@pytest.fixture(scope='session')
+
+@pytest.fixture(autouse=True, scope='session')
 def setup():
-    print("SETUP: TODO")
+    load_dotenv(find_dotenv(), override=False)
 
     yield
-
-    print("CLEAN UP TODO")

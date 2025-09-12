@@ -17,7 +17,17 @@ _Recommendation Engine is a Python API with MongoDB_
 make quickstart
 ```
 
-Go to http://127.0.0.1:8000
+* Go to http://127.0.0.1:8000
+* Admin username: `admin`
+* Admin password: `admin`
+
+The Application at the moment **does not** have a signup feature, when up and running has an unique "admin" user
+defined by these 2 environment variables:
+
+```bash
+APP_ADMIN_USERNAME=<admin-username>
+APP_ADMIN_PASS_HASH=<admin-password-hash>
+```
 
 ### Run locally
 
@@ -25,6 +35,21 @@ To run the app locally, use this command:
 
 ```bash
 make run
+```
+
+API
+---
+
+### 1) Auth
+
+```bash
+curl --location 'http://127.0.0.1:8000/api/v1/auth/login' \
+--header 'Content-Type: application/json' \
+--data '{
+    "username": "admin",
+    "password": "admin"
+}
+'
 ```
 
 Development
