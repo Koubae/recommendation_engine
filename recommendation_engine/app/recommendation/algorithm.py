@@ -3,6 +3,7 @@ from itertools import combinations
 
 
 def generate_recommendation_subsequences(product_ids: t.Sequence[int]) -> list[list[int]]:
+    product_ids = sorted(product_ids)
     count = len(product_ids)
 
     subsequences: list[list[int]] = []
