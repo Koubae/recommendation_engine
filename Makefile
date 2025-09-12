@@ -11,7 +11,7 @@ quickstart: init-venv run
 # --------------------------
 
 run:
-	@$(ENV_RUNNER) run python $(SRC)/main.py
+	@$(ENV_RUNNER) run fastapi dev $(SRC)/main.py --port=8000
 
 # --------------------------
 # Init
