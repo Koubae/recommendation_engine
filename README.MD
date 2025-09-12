@@ -27,6 +27,21 @@ To run the app locally, use this command:
 make run
 ```
 
+API
+---
+
+### 1) Auth
+
+```bash
+curl --location 'http://127.0.0.1:8000/api/v1/auth/login' \
+--header 'Content-Type: application/json' \
+--data '{
+    "username": "admin",
+    "password": "admin"
+}
+'
+```
+
 Development
 -----------
 
