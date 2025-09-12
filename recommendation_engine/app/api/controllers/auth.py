@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
 
+from recommendation_engine.app.api.providers import AuthServiceSingleton
 from recommendation_engine.settings import Settings
 
 
@@ -26,7 +27,9 @@ class AuthController:
     @staticmethod
     async def login(
         request: LoginRequest,
+        auth_service: AuthServiceSingleton,
     ) -> LoginResponse:
         print(request)
+        print(auth_service)
         response = LoginResponse(access_token="dummy", expires=0.0)
         return response
