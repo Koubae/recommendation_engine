@@ -4,6 +4,7 @@ from dotenv import find_dotenv, load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from recommendation_engine.app.api import router
 from recommendation_engine.app.core.setup_logger import setup_logger
 from recommendation_engine.settings import Settings
 
@@ -26,7 +27,7 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
-    root_router = routes.get_router()
+    root_router = router.get_router()
     app.include_router(root_router)
     return app
 
