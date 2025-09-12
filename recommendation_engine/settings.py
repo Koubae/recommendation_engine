@@ -22,6 +22,9 @@ class Settings:
     app_version: str
     app_api_cors_allowed_domains: tuple[str, ...]
 
+    app_admin_username: str
+    app_admin_password: str
+
     @classmethod
     def get(cls) -> "Settings":
         if cls._singleton is None:
@@ -31,6 +34,9 @@ class Settings:
                 app_name=os.getenv("APP_NAME", "Recommendation Engine"),
                 app_version=os.getenv("APP_VERSION", "undefined"),
                 app_api_cors_allowed_domains=tuple(os.environ.get("APP_API_CORS_ALLOWED_DOMAINS", "").split(",")),
+
+                app_admin_username=os.getenv("APP_ADMIN_USERNAME", "admin"),
+                app_admin_password=os.getenv("APP_ADMIN_PASS", "admin"),
             )
         return cls._singleton
 
