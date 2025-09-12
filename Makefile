@@ -4,7 +4,7 @@ VENV := .venv
 ENV_RUNNER ?= uv
 SRC := recommendation_engine
 
-quickstart: init-venv run
+quickstart: init-venv docker-mongo-up run
 
 # --------------------------
 # Run (no-docker)
@@ -16,6 +16,22 @@ run:
 # Needed if you need to generate NEW RSA certificates for JWT Authorization
 generate_certificates:
 	openssl genrsa -out ./conf/cert_private.pem 2048 && openssl rsa -in ./conf/cert_private.pem -pubout -out ./conf/cert_public.pem
+
+# --------------------------
+# Run (docker)
+# --------------------------
+down:
+	@docker compose down
+
+# ////////////////////
+#		DB -- MongoDB
+# ////////////////////
+docker-mongo-up:
+	@docker compose up db-mongodb-dashboard
+docker-mongo-down:
+	@docker compose down db-mongodb-dashboard
+docker-mongo-down-clean-up:
+	@docker compose down -v db-mongodb-dashboard
 
 # --------------------------
 # Init
