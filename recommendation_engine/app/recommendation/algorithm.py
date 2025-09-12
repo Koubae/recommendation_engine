@@ -3,6 +3,24 @@ from itertools import combinations
 
 
 def generate_recommendation_subsequences(product_ids: t.Sequence[int]) -> list[list[int]]:
+    """Generate all non-repeated subsequences of product IDs.
+
+    The input sequence of product IDs is first sorted in ascending order.
+    Then, all unique combinations are generated and returned, ordered by
+    subsequence length and lexicographically within each length.
+
+    Example:
+        >>> generate_recommendation_subsequences([3, 1, 2])
+        [
+            [1],
+            [2],
+            [3],
+            [1, 2],
+            [1, 3],
+            [2, 3],
+            [1, 2, 3]
+        ]
+    """
     product_ids = sorted(product_ids)
     count = len(product_ids)
 
