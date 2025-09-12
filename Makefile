@@ -11,12 +11,12 @@ quickstart: init-venv run
 # --------------------------
 
 run:
-	@$(ENV_RUNNER) run python $(SRC)/main.py
+	@$(ENV_RUNNER) run fastapi dev $(SRC)/main.py --port=8000
 
 # --------------------------
 # Init
 # --------------------------
-init-venv: .install-uv .create-venv update-venv .install-deps
+init-venv: update-env-file .install-uv .create-venv update-venv .install-deps
 update-venv: lock sync
 
 lock:
@@ -37,6 +37,11 @@ sync:
 
 .install-deps:
 	@$(ENV_RUNNER) pip install -e . --group dev
+
+update-env-file:
+	@echo 'Updating .env from .env.example 🖋️...'
+	@cp .env.example .env
+	@echo '.env Updated ✨'
 
 # =========================
 # 		Code Quality
