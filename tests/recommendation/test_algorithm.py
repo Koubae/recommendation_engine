@@ -9,7 +9,7 @@ class TestRecommendationAlgorithms:
     @pytest.mark.parametrize("input_ids, expected", RECOMMENDATIONS_SEQUENCES_SAMPLES)
     def test_generate_recommendation_subsequences(self, input_ids: tuple[int, ...], expected: list[list[int]]):
         recommendations = generate_recommendation_subsequences(input_ids)
-        assert expected == recommendations
+        assert recommendations == expected
 
     def test_generate_recommendation_subsequences_realistic_case(self):
         product_ids = (1234, 13034, 30324, 33912, 240234)
@@ -48,11 +48,16 @@ class TestRecommendationAlgorithms:
             [13034, 30324, 33912, 240234],
             [1234, 13034, 30324, 33912, 240234],
         ]
-        assert expected == recommendations
+        assert recommendations == expected
 
     def test_generate_recommendation_subsequences_unsorted(self):
         """GIVEN a list of product ids; WHEN the list is unsorted, THEN the algorithm should generated sorted output"""
         product_ids = (3, 2, 1)
         recommendations = generate_recommendation_subsequences(product_ids)
         expected = [[1], [2], [3], [1, 2], [1, 3], [2, 3], [1, 2, 3]]
-        assert expected == recommendations
+        assert recommendations == expected
+
+    def test_generate_recommendation_subsequences_empty(self):
+        recommendations = generate_recommendation_subsequences([])
+
+        assert recommendations == []
