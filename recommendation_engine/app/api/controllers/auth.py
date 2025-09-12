@@ -1,8 +1,14 @@
-from fastapi import APIRouter
+import logging
+
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 from recommendation_engine.app.api.providers import AuthServiceSingleton
+from recommendation_engine.app.auth.exceptions import AuthPasswordInvalid, AuthUsernameInvalid
+from recommendation_engine.app.auth.models import AccessToken
 from recommendation_engine.settings import Settings
+
+logger = logging.getLogger(__name__)
 
 
 class LoginRequest(BaseModel):
@@ -29,7 +35,19 @@ class AuthController:
         request: LoginRequest,
         auth_service: AuthServiceSingleton,
     ) -> LoginResponse:
-        print(request)
-        print(auth_service)
-        response = LoginResponse(access_token="dummy", expires=0.0)
-        return response
+        try:
+            access_token: AccessToken = await auth_service.login(request.username, request.password)
+        except (AuthUsernameInvalid, AuthPasswordInvalid) as error:
+            logger.info(
+                f"Login failed, invalid password for account {request.username}: {repr(error)}",
+                extra={"extra": {"username": request.username}},
+            )
+            raise HTTPException(
+                status_code=401,
+                detail={"error": "Username or Password is incorrect!"},
+            )
+
+        return LoginResponse(
+            access_token=access_token.access_token,
+            expires=access_token.expires,
+        )

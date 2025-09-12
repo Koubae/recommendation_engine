@@ -2,7 +2,11 @@ import os
 import typing as t
 from dataclasses import dataclass, field
 
-from recommendation_engine.app.auth.exceptions import AuthCertificateLoadException
+from recommendation_engine.app.auth.exceptions import (
+    AuthCertificateLoadException,
+    AuthUsernameInvalid,
+    AuthPasswordInvalid,
+)
 
 
 @dataclass(frozen=True)
@@ -46,6 +50,14 @@ class Settings:
             cert_private, cert_public = cls._load_certificates(cert_private_file_name, cert_public_file_name)
             app_jwt_expiration_hours = min(int(os.getenv("APP_JWT_EXPIRATION_HOURS", 4)), 1)
 
+            app_admin_username = os.getenv("APP_ADMIN_USERNAME", "admin")
+            app_admin_password_hash = os.getenv("APP_ADMIN_PASS_HASH", "admin")
+
+            if not app_admin_username:
+                raise AuthUsernameInvalid()
+            if not app_admin_password_hash:
+                raise AuthPasswordInvalid()
+
             cls._singleton = cls(
                 log_level=os.getenv("LOG_LEVEL", "DEBUG"),
                 log_format=os.getenv("LOG_FORMAT", "%(asctime)s %(message)s"),
@@ -54,8 +66,8 @@ class Settings:
                 app_api_cors_allowed_domains=tuple(os.environ.get("APP_API_CORS_ALLOWED_DOMAINS", "").split(",")),
                 app_jwt_expiration_hours=app_jwt_expiration_hours,
 
-                app_admin_username=os.getenv("APP_ADMIN_USERNAME", "admin"),
-                app_admin_password_hash=os.getenv("APP_ADMIN_PASS_HASH", "admin"),
+                app_admin_username=app_admin_username,
+                app_admin_password_hash=app_admin_password_hash,
                 cert_private_file_name=cert_private_file_name,
                 cert_public_file_name=cert_public_file_name,
                 cert_private=cert_private,
