@@ -3,9 +3,9 @@ import logging
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-from recommendation_engine.app.api.providers import AuthServiceSingleton
 from recommendation_engine.app.auth.exceptions import AuthPasswordInvalid, AuthUsernameInvalid
 from recommendation_engine.app.auth.models import AccessToken
+from recommendation_engine.app.providers import AuthServiceSingleton
 from recommendation_engine.settings import Settings
 
 logger = logging.getLogger(__name__)

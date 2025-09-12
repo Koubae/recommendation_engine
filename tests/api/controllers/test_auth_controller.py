@@ -11,7 +11,7 @@ from recommendation_engine.app.auth.exceptions import AuthUsernameInvalid, AuthP
 class TestAuthController:
     @pytest.mark.asyncio
     @patch(
-        "recommendation_engine.app.api.providers.auth_service",
+        "recommendation_engine.app.providers.auth_service",
         new_callable=AsyncMock,
     )
     async def test_login_success(self, mock_auth_service):
@@ -27,7 +27,7 @@ class TestAuthController:
 
     @pytest.mark.asyncio
     @patch(
-        "recommendation_engine.app.api.providers.auth_service",
+        "recommendation_engine.app.providers.auth_service",
         new_callable=AsyncMock,
     )
     async def test_login_account_does_not_exist(self, mock_auth_service):
@@ -44,7 +44,7 @@ class TestAuthController:
 
     @pytest.mark.asyncio
     @patch(
-        "recommendation_engine.app.api.providers.auth_service",
+        "recommendation_engine.app.providers.auth_service",
         new_callable=AsyncMock,
     )
     async def test_login_invalid_credentials(self, mock_auth_service):

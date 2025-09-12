@@ -7,11 +7,16 @@ from recommendation_engine.app.auth.access_token import HashLibPasswordHasher, J
 from recommendation_engine.app.auth.service import AuthService
 
 
+def provide_access_token_auth() -> JWTAccessTokenAuth:
+    auth = JWTAccessTokenAuth()
+    return auth
+
+
 @cache
-def auth_service() -> AuthService:
+def auth_service(jwt_auth: JWTAccessTokenAuth = Depends(provide_access_token_auth)) -> AuthService:
     service = AuthService(
         password_hasher=HashLibPasswordHasher(),
-        auth=JWTAccessTokenAuth(),
+        auth=jwt_auth,
     )
     return service
 
