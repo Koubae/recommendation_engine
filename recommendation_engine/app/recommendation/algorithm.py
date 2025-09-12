@@ -1,8 +1,9 @@
-import typing as t
 from itertools import combinations
 
+from recommendation_engine.app.recommendation.types import TRecommendationSubSequences
 
-def generate_recommendation_subsequences(product_ids: t.Sequence[int]) -> list[list[int]]:
+
+def generate_recommendation_subsequences(product_ids: tuple[int, ...] | list[int]) -> TRecommendationSubSequences:
     """Generate all non-repeated subsequences of product IDs.
 
     The input sequence of product IDs is first sorted in ascending order.
