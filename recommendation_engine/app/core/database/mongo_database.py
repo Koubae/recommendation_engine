@@ -7,6 +7,7 @@ from pymongo.asynchronous.database import AsyncDatabase
 from pymongo.errors import ConnectionFailure, CollectionInvalid
 from pymongo.server_api import ServerApi
 
+from recommendation_engine.app.core.database.database_client_base import DatabaseClientBase
 from recommendation_engine.app.core.database.repository_base import RepositoryBase
 from recommendation_engine.settings import Settings
 
@@ -21,7 +22,7 @@ class MongoDatabaseInitDBException(MongoDatabaseException):
     pass
 
 
-class MongoDatabase:
+class MongoDatabase(DatabaseClientBase):
 
     def __init__(self, settings: Settings | None = None):
         self._settings: Settings = settings or Settings.get()
