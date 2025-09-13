@@ -5,8 +5,8 @@ from pydantic import BaseModel, Field
 from recommendation_engine.app.core.database.collections import PyObjectId
 from recommendation_engine.app.recommendation.types import (
     TProductIdsFingerPrint,
-    TRecommendationSubSequences,
     TProductIdsOrderedAndUnique,
+    TRecommendationSubSequences,
 )
 
 

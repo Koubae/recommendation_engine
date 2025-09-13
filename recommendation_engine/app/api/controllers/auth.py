@@ -8,6 +8,7 @@ from recommendation_engine.app.auth.models import AccessToken
 from recommendation_engine.app.providers import AuthServiceSingleton
 from recommendation_engine.settings import Settings
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -39,7 +40,7 @@ class AuthController:
             access_token: AccessToken = await auth_service.login(request.username, request.password)
         except (AuthUsernameInvalid, AuthPasswordInvalid) as error:
             logger.info(
-                f"Login failed, invalid password for account {request.username}: {repr(error)}",
+                f"Login failed, invalid password for account {request.username}: {error!r}",
                 extra={"extra": {"username": request.username}},
             )
             raise HTTPException(

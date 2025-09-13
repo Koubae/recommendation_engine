@@ -4,8 +4,8 @@ from dataclasses import dataclass, field
 
 from recommendation_engine.app.auth.exceptions import (
     AuthCertificateLoadException,
-    AuthUsernameInvalid,
     AuthPasswordInvalid,
+    AuthUsernameInvalid,
 )
 
 
@@ -15,7 +15,7 @@ class SettingsLoadException(Exception):
 
 @dataclass(frozen=True)
 class Settings:
-    """Singleton Instance for Application settings"""
+    """Singleton Instance for Application settings."""
 
     _singleton: t.ClassVar[t.Optional["Settings"]] = None
 
@@ -62,7 +62,7 @@ class Settings:
         return cls._singleton
 
     @classmethod
-    def build_settings(cls, custom_settings: dict | None = None) -> t.Self:
+    def build_settings(cls, custom_settings: dict[str, t.Any] | None = None) -> t.Self:
         db_mongo_host = os.getenv("DB_MONGO_HOST", None)
         db_mongo_port = int(os.getenv("DB_MONGO_PORT", None))
         db_mongo_username = os.getenv("DB_MONGO_USERNAME", None)
@@ -98,7 +98,6 @@ class Settings:
             app_version=os.getenv("APP_VERSION", "undefined"),
             app_api_cors_allowed_domains=tuple(os.environ.get("APP_API_CORS_ALLOWED_DOMAINS", "").split(",")),
             app_jwt_expiration_hours=app_jwt_expiration_hours,
-
             db_mongo_host=db_mongo_host,
             db_mongo_port=db_mongo_port,
             db_mongo_username=db_mongo_username,
@@ -106,7 +105,6 @@ class Settings:
             db_mongo_db_name=db_mongo_db_name,
             db_mongo_min_pool_size=db_mongo_min_pool_size,
             db_mongo_max_pool_size=db_mongo_max_pool_size,
-
             app_admin_username=app_admin_username,
             app_admin_password_hash=app_admin_password_hash,
             cert_private_file_name=cert_private_file_name,
@@ -126,15 +124,17 @@ class Settings:
     def parse_bool_env(env_name: str, default: bool = False) -> bool:
         return os.getenv(env_name, str(default)).lower() in ("true", "1")
 
-    def get_cert_public(self) -> str:
+    def get_cert_public(self) -> str | None:
         return self.cert_public
 
-    def get_cert_private(self) -> str:
+    def get_cert_private(self) -> str | None:
         return self.cert_private
 
     @classmethod
     def _load_certificates(
-        cls, cert_private_file_name: str | None, cert_public_file_name: str | None,
+        cls,
+        cert_private_file_name: str | None,
+        cert_public_file_name: str | None,
     ) -> tuple[str | None, str | None]:
         cert_private: str | None = None
         cert_public: str | None = None

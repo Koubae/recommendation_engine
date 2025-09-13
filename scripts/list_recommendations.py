@@ -1,7 +1,7 @@
 import httpx
 
 
-def main():
+def main() -> None:
     host = "http://127.0.0.1:8000"
 
     with httpx.Client() as client:

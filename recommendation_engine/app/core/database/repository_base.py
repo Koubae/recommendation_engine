@@ -16,9 +16,9 @@ class RepositoryBase(ABC):
         self._database_client: DatabaseClientBase = database_client
 
     @property
-    def db(self) -> AsyncDatabase:
+    def db(self) -> AsyncDatabase[dict[str, t.Any]]:
         return self._database_client.db
 
     @property
-    def collection(self) -> AsyncCollection:
+    def collection(self) -> AsyncCollection[dict[str, t.Any]]:
         return self.db[self.COLLECTION_NAME]

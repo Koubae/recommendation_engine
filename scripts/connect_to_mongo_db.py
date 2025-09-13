@@ -3,7 +3,7 @@ import asyncio
 from pymongo import AsyncMongoClient
 
 
-async def main():
+async def main() -> None:
     uri = "mongodb://root:pass@127.0.0.1:27017/?authSource=admin&serverSelectionTimeoutMS=5000"
     client = AsyncMongoClient(uri)
     db = client["recommendation_engine"]

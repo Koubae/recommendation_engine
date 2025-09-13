@@ -9,6 +9,7 @@ from recommendation_engine.app.auth.exceptions import AuthAccessTokenExpired, Au
 from recommendation_engine.app.auth.models import AccessToken
 from recommendation_engine.settings import Settings
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -29,9 +30,9 @@ class JWTAccessTokenAuth:
         settings = Settings.get()
         expires_seconds = (datetime.now(UTC) + timedelta(hours=settings.app_jwt_expiration_hours)).timestamp()
         payload = {
-            "sub"     : str(user_id),
-            "exp"     : expires_seconds,
-            "iat"     : datetime.now(UTC),
+            "sub": str(user_id),
+            "exp": expires_seconds,
+            "iat": datetime.now(UTC),
             "username": username,
         }
         cert = settings.get_cert_private()
@@ -73,8 +74,8 @@ class JWTAccessTokenAuth:
                 extra={
                     "extra": {
                         "access_token": access_token,
-                        "payload"     : payload,
-                        "error"       : repr(error),
+                        "payload": payload,
+                        "error": repr(error),
                     }
                 },
             )

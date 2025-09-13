@@ -1,9 +1,8 @@
 import httpx
-
 from tests.data.recommendation_sequences_samples import RECOMMENDATIONS_SEQUENCES_SAMPLES
 
 
-def main():
+def main() -> None:
     host = "http://127.0.0.1:8000"
 
     samples = list(RECOMMENDATIONS_SEQUENCES_SAMPLES) + [

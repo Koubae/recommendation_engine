@@ -6,6 +6,7 @@ from typing import Any
 
 from recommendation_engine.settings import Settings
 
+
 GREEN = "\033[32m"
 YELLOW = "\033[33m"
 RESET = "\033[0m"
@@ -19,7 +20,6 @@ class DynamicExtraFormatter(logging.Formatter):
         message = super().format(record)
 
         if hasattr(record, "extra"):
-
             try:
                 extra_formatted = json.dumps(getattr(record, "extra"), indent=2)
             except (ValueError, AttributeError, json.JSONDecodeError):
@@ -33,7 +33,7 @@ class DynamicExtraFormatter(logging.Formatter):
         return message
 
 
-class OverwriteStreamHandler(logging.StreamHandler):
+class OverwriteStreamHandler(logging.StreamHandler[Any]):
     def __init__(self, stream: Any | None = None) -> None:
         super().__init__(stream)
         self.counter = 0

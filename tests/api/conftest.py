@@ -8,7 +8,7 @@ from fastapi.testclient import TestClient
 
 from recommendation_engine.app.auth.models import AccessToken
 from recommendation_engine.app.auth.secure import LoggedIn
-from recommendation_engine.app.providers import recommendation_repository, get_database
+from recommendation_engine.app.providers import get_database, recommendation_repository
 from recommendation_engine.app.recommendation.repository import RecommendationRepository
 from recommendation_engine.asgi import create_app
 
