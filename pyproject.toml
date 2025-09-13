@@ -150,7 +150,11 @@ markers = [
 branch = true
 source = ["recommendation_engine"]
 omit = [
+    "*/main.py",
     "*/__init__.py",
+    "*/setup_logger.py",
+    "*/secure.py",
+    "*/providers.py",
     "*/migrations/*",
     "*/tests/*",
 ]

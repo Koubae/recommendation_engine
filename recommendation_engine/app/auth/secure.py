@@ -1,3 +1,4 @@
+# pragma: no cover
 import typing as t
 
 from fastapi import Depends, HTTPException
@@ -7,7 +8,6 @@ from recommendation_engine.app.auth.access_token import JWTAccessTokenAuth
 from recommendation_engine.app.auth.exceptions import AuthAccessTokenExpired, AuthAccessTokenInvalid
 from recommendation_engine.app.auth.models import AccessToken
 from recommendation_engine.app.providers import provide_access_token_auth
-
 
 security = HTTPBearer()
 

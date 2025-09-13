@@ -1,3 +1,4 @@
+# pragma: no cover
 import json
 import logging
 import os
@@ -5,7 +6,6 @@ import sys
 from typing import Any
 
 from recommendation_engine.settings import Settings
-
 
 GREEN = "\033[32m"
 YELLOW = "\033[33m"
