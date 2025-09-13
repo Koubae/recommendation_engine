@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from recommendation_engine.app.api import router
 from recommendation_engine.app.core.setup_logger import setup_logger
 from recommendation_engine.app.providers import get_database
+from recommendation_engine.app.recommendation.repository import RecommendationRepository
 from recommendation_engine.settings import Settings
 
 __all__ = (
@@ -22,7 +23,7 @@ async def lifespan(_: FastAPI):
     logger.info("Initializing database")
 
     database = get_database()
-    await database.init_db()
+    await database.init_db(repositories=(RecommendationRepository,))
 
     yield
 

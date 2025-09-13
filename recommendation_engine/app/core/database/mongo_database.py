@@ -2,10 +2,12 @@ import logging
 from urllib.parse import quote_plus
 
 from pymongo import AsyncMongoClient
+from pymongo.asynchronous.collection import AsyncCollection
 from pymongo.asynchronous.database import AsyncDatabase
-from pymongo.errors import ConnectionFailure
+from pymongo.errors import ConnectionFailure, CollectionInvalid
 from pymongo.server_api import ServerApi
 
+from recommendation_engine.app.core.database.repository_base import RepositoryBase
 from recommendation_engine.settings import Settings
 
 logger = logging.getLogger(__name__)
@@ -43,16 +45,23 @@ class MongoDatabase:
     def db(self) -> AsyncDatabase:
         return self._client.get_database(self._database_name)
 
-    async def init_db(self) -> None:
+    async def init_db(self, repositories: tuple[RepositoryBase, ...]) -> None:
         logger.info("Initializing MongoDB database")
         await self._ping()
 
         db = self.db
-        app_collection = ("recommendations",)
-        collections = await db.list_collection_names()
-        for collection in app_collection:
-            if collection not in collections:
-                await db.create_collection(collection)
+        for repository in repositories:
+            collection_name = repository.COLLECTION_NAME
+
+            try:
+                await db.create_collection(collection_name, validator=repository.COLLECTION_VALIDATOR)
+            except CollectionInvalid:
+                pass
+
+            collection: AsyncCollection = db[collection_name]
+            for index in repository.COLLECTION_INDEXES:
+                await collection.create_index([(index["key"], index["order"])], unique=index["unique"])
+            logger.info(f"Collection {collection_name} initialized")
 
         logger.info("MongoDB database initialized")
 
