@@ -6,7 +6,7 @@ from recommendation_engine.app.api.controllers.index import IndexController
 
 
 @pytest.mark.unit
-class TestIndexController:
+class TestUnitIndexController:
     @pytest.fixture
     def app(self):
         app = FastAPI()

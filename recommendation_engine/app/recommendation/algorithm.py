@@ -1,9 +1,11 @@
 from itertools import combinations
 
-from recommendation_engine.app.recommendation.types import TRecommendationSubSequences
+from recommendation_engine.app.recommendation.types import TProductIdsOrderedAndUnique, TRecommendationSubSequences
 
 
-def generate_recommendation_subsequences(product_ids: tuple[int, ...] | list[int]) -> TRecommendationSubSequences:
+def generate_recommendation_subsequences(
+    product_ids: tuple[int, ...] | list[int],
+) -> tuple[TProductIdsOrderedAndUnique, TRecommendationSubSequences]:
     """Generate all non-repeated subsequences of product IDs.
 
     The input sequence of product IDs is first sorted in ascending order.
@@ -22,11 +24,11 @@ def generate_recommendation_subsequences(product_ids: tuple[int, ...] | list[int
             [1, 2, 3]
         ]
     """
-    product_ids = sorted(product_ids)
-    count = len(product_ids)
+    unique_ordered_product_ids = sorted(set(product_ids))
+    count = len(unique_ordered_product_ids)
 
     subsequences: list[list[int]] = []
     for sequence_length in range(1, count + 1):
-        sequences_iter = combinations(product_ids, sequence_length)
+        sequences_iter = combinations(unique_ordered_product_ids, sequence_length)
         subsequences.extend([list(sequence) for sequence in sequences_iter])
-    return subsequences
+    return unique_ordered_product_ids, subsequences
