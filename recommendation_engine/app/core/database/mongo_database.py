@@ -48,7 +48,7 @@ class MongoDatabase(DatabaseClientBase):
 
     async def init_db(self, repositories: tuple[RepositoryBase, ...]) -> None:
         logger.info("Initializing MongoDB database")
-        await self._ping()
+        await self.ping()
 
         db = self.db
         for repository in repositories:
@@ -73,7 +73,7 @@ class MongoDatabase(DatabaseClientBase):
 
         logger.info("MongoDB  database closed")
 
-    async def _ping(self) -> None:
+    async def ping(self) -> bool:
         try:
             await self._client.admin.command({'ping': 1})
         except ConnectionFailure as error:
@@ -82,3 +82,4 @@ class MongoDatabase(DatabaseClientBase):
                 "Error while pinging MongoDB server. Check your connection settings and try again.",
             )
         logger.info("MongoDB ping OK.")
+        return True

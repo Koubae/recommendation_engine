@@ -62,7 +62,7 @@ class Settings:
         return cls._singleton
 
     @classmethod
-    def build_settings(cls) -> t.Self:
+    def build_settings(cls, custom_settings: dict | None = None) -> t.Self:
         db_mongo_host = os.getenv("DB_MONGO_HOST", None)
         db_mongo_port = int(os.getenv("DB_MONGO_PORT", None))
         db_mongo_username = os.getenv("DB_MONGO_USERNAME", None)
@@ -91,7 +91,7 @@ class Settings:
         if not app_admin_password_hash:
             raise AuthPasswordInvalid()
 
-        _settings = cls(
+        settings = dict(
             log_level=os.getenv("LOG_LEVEL", "DEBUG"),
             log_format=os.getenv("LOG_FORMAT", "%(asctime)s %(message)s"),
             app_name=os.getenv("APP_NAME", "Recommendation Engine"),
@@ -113,7 +113,9 @@ class Settings:
             cert_public_file_name=cert_public_file_name,
             cert_private=cert_private,
             cert_public=cert_public,
-        )
+        ) | (custom_settings or {})
+
+        _settings = cls(**settings)
         return _settings
 
     def get_app_info(self) -> str:

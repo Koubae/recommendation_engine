@@ -130,6 +130,7 @@ pythonpath = [
     "recommendation_engine"
 ]
 testpaths = ["tests", "recommendation_engine"]
+asyncio_mode = "auto"
 addopts = [
     "--tb=short",
     "--disable-warnings",

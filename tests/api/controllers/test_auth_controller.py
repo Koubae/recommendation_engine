@@ -8,7 +8,7 @@ from recommendation_engine.app.auth.exceptions import AuthUsernameInvalid, AuthP
 
 
 @pytest.mark.unit
-class TestAuthController:
+class TestUnitAuthController:
     @pytest.mark.asyncio
     @patch(
         "recommendation_engine.app.providers.auth_service",

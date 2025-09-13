@@ -5,7 +5,7 @@ from tests.data.recommendation_sequences_samples import RECOMMENDATIONS_SEQUENCE
 
 
 @pytest.mark.unit
-class TestRecommendationAlgorithms:
+class TestUnitRecommendationAlgorithms:
     @pytest.mark.parametrize("input_ids, expected", RECOMMENDATIONS_SEQUENCES_SAMPLES)
     def test_generate_recommendation_subsequences(self, input_ids: tuple[int, ...], expected: list[list[int]]):
         _, recommendations = generate_recommendation_subsequences(input_ids)

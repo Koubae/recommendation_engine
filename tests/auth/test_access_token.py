@@ -10,7 +10,7 @@ from recommendation_engine.app.auth.models import AccessToken
 
 
 @pytest.mark.unit
-class TestHashLibPasswordHasher:
+class TestUnitHashLibPasswordHasher:
 
     def test_hash_password_generates_consistent_hash(self):
         password = "test_password"
@@ -48,7 +48,7 @@ class TestHashLibPasswordHasher:
 
 
 @pytest.mark.unit
-class TestJWTAccessTokenGenerator:
+class TestUnitJWTAccessTokenGenerator:
 
     def test_generate_access_token_creates_valid_token(self):
         generator = JWTAccessTokenAuth()
