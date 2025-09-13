@@ -7,6 +7,7 @@ from typing import Any
 
 from recommendation_engine.settings import Settings
 
+
 GREEN = "\033[32m"
 YELLOW = "\033[33m"
 RESET = "\033[0m"
