@@ -1,0 +1,103 @@
+{
+	"info": {
+		"_postman_id": "27660921-2603-416a-a4db-e37bfa5819ec",
+		"name": "Recommendation Engine",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12556739",
+		"_collection_link": "https://federico-2339.postman.co/workspace/workspace_2~1c63b69a-8d24-426b-a534-8af6f5ffa2e6/collection/12556739-27660921-2603-416a-a4db-e37bfa5819ec?action=share&source=collection_link&creator=12556739"
+	},
+	"item": [
+		{
+			"name": "Recommendations",
+			"item": []
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();\r",
+							"\r",
+							"var access_token = responseJson.access_token;\r",
+							"pm.environment.set(\"access_token\", access_token)\r",
+							"pm.collectionVariables.set(\"access_token\", access_token);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{RECOMENDATION_API_URL}}/api/v1/auth/login",
+					"host": [
+						"{{RECOMENDATION_API_URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "RECOMENDATION_API_URL",
+			"value": ""
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "default"
+		}
+	]
+}
