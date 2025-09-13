@@ -1,8 +1,8 @@
 import pytest
 
 from recommendation_engine.app.recommendation.algorithm import (
-    generate_recommendation_subsequences,
     generate_product_ids_fingerprint,
+    generate_recommendation_subsequences,
 )
 from tests.data.recommendation_sequences_samples import RECOMMENDATIONS_SEQUENCES_SAMPLES
 
@@ -54,7 +54,8 @@ class TestUnitRecommendationAlgorithms:
         assert recommendations == expected
 
     def test_generate_recommendation_subsequences_unsorted(self):
-        """GIVEN a list of product ids; WHEN the list is unsorted, THEN the algorithm should generated sorted output"""
+        """GIVEN a list of product ids; WHEN the list is unsorted,
+        THEN the algorithm should generated sorted output"""
         product_ids = (3, 2, 1)
         unique_ordered_product_ids, recommendations = generate_recommendation_subsequences(product_ids)
         expected = [[1], [2], [3], [1, 2], [1, 3], [2, 3], [1, 2, 3]]
@@ -62,7 +63,8 @@ class TestUnitRecommendationAlgorithms:
         assert unique_ordered_product_ids == [1, 2, 3]
 
     def test_generate_recommendation_subsequences_unique_values(self):
-        """GIVEN a list of product ids; WHEN the list contains repeated values, THEN the algorithm should generated sorted output"""
+        """GIVEN a list of product ids; WHEN the list contains repeated values,
+        THEN the algorithm should generated sorted output"""
         product_ids = (1, 2, 3, 1, 2, 3)
         unique_ordered_product_ids, recommendations = generate_recommendation_subsequences(product_ids)
         expected = [[1], [2], [3], [1, 2], [1, 3], [2, 3], [1, 2, 3]]

@@ -3,9 +3,9 @@ import json
 from itertools import combinations
 
 from recommendation_engine.app.recommendation.types import (
+    TProductIdsFingerPrint,
     TProductIdsOrderedAndUnique,
     TRecommendationSubSequences,
-    TProductIdsFingerPrint,
 )
 
 

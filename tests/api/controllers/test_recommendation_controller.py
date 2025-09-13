@@ -8,8 +8,8 @@ from bson import ObjectId
 from fastapi.testclient import TestClient
 
 from recommendation_engine.app.recommendation.repository import (
-    RecommendationRepositoryException,
     RecommendationDuplicate,
+    RecommendationRepositoryException,
 )
 
 
@@ -51,11 +51,11 @@ class TestUnitRecommendationResponse:
     def test_show_success_returns_document(self):
         _id = str(ObjectId())
         doc = {
-            "_id"         : _id,
-            "fingerprint" : "abc123",
-            "sequence"    : [1, 2],
+            "_id": _id,
+            "fingerprint": "abc123",
+            "sequence": [1, 2],
             "subsequences": [[1], [2], [1, 2]],
-            "createdAt"   : datetime.now(timezone.utc).isoformat(),
+            "createdAt": datetime.now(timezone.utc).isoformat(),
         }
         self.mock_recommendation_repository.get.return_value = doc
 
@@ -82,15 +82,15 @@ class TestUnitRecommendationResponse:
 
     def test_create_success_returns_document(self):
         doc = {
-            "fingerprint" : str(uuid.uuid4()),
-            "sequence"    : [1, 2, 3],
+            "fingerprint": str(uuid.uuid4()),
+            "sequence": [1, 2, 3],
             "subsequences": [[1], [2], [3], [1, 2], [1, 3], [2, 3], [1, 2, 3]],
-            "createdAt"   : datetime.now(timezone.utc).isoformat(),
+            "createdAt": datetime.now(timezone.utc).isoformat(),
         }
         self.mock_recommendation_repository.create.return_value = doc
 
         r = self.web_client.post("/api/v1/recommendations", json={"product_ids": [3, 1, 2, 2]})
-        args, kwargs = self.mock_recommendation_repository.create.await_args
+        args, _ = self.mock_recommendation_repository.create.await_args
         body = r.json()
 
         assert r.status_code == 201

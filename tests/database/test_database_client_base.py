@@ -28,8 +28,11 @@ class TestIntegrationMongoDatabase:
         assert response is True
 
     async def test_ping_on_connection_error(self):
-        with patch(
+        with (
+            patch(
                 "pymongo.asynchronous.database.AsyncDatabase.command",
                 side_effect=ConnectionFailure("mock connection error"),
-        ), pytest.raises(MongoDatabaseInitDBException):
+            ),
+            pytest.raises(MongoDatabaseInitDBException),
+        ):
             await self.db.ping()

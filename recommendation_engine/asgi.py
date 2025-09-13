@@ -1,5 +1,6 @@
 import logging
 from contextlib import asynccontextmanager
+from typing import AsyncGenerator
 
 from dotenv import find_dotenv, load_dotenv
 from fastapi import FastAPI
@@ -11,6 +12,7 @@ from recommendation_engine.app.providers import get_database
 from recommendation_engine.app.recommendation.repository import RecommendationRepository
 from recommendation_engine.settings import Settings
 
+
 __all__ = (
     "create_app",
     "setup",
@@ -19,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
-async def lifespan(_: FastAPI):
+async def lifespan(_: FastAPI) -> AsyncGenerator[None, None]:
     logger.info("Initializing database")
 
     database = get_database()

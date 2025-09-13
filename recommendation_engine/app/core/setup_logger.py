@@ -1,3 +1,4 @@
+# pragma: no cover
 import json
 import logging
 import os
@@ -19,7 +20,6 @@ class DynamicExtraFormatter(logging.Formatter):
         message = super().format(record)
 
         if hasattr(record, "extra"):
-
             try:
                 extra_formatted = json.dumps(getattr(record, "extra"), indent=2)
             except (ValueError, AttributeError, json.JSONDecodeError):
@@ -33,7 +33,7 @@ class DynamicExtraFormatter(logging.Formatter):
         return message
 
 
-class OverwriteStreamHandler(logging.StreamHandler):
+class OverwriteStreamHandler(logging.StreamHandler[Any]):
     def __init__(self, stream: Any | None = None) -> None:
         super().__init__(stream)
         self.counter = 0

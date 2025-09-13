@@ -9,13 +9,13 @@ from recommendation_engine.app.auth.models import AccessToken
 from recommendation_engine.app.auth.secure import LoggedIn
 from recommendation_engine.app.providers import RecommendationRepositorySingleton
 from recommendation_engine.app.recommendation.algorithm import (
-    generate_recommendation_subsequences,
     generate_product_ids_fingerprint,
+    generate_recommendation_subsequences,
 )
 from recommendation_engine.app.recommendation.models import RecommendationModel
 from recommendation_engine.app.recommendation.repository import (
-    RecommendationRepositoryException,
     RecommendationDuplicate,
+    RecommendationRepositoryException,
 )
 from recommendation_engine.app.recommendation.types import (
     TProductIdsFingerPrint,
@@ -24,11 +24,15 @@ from recommendation_engine.app.recommendation.types import (
 )
 from recommendation_engine.settings import Settings
 
+
 logger = logging.getLogger(__name__)
 
 
 class CreateRequest(BaseModel):
-    product_ids: conlist(int, min_length=1) = Field(..., description="Sequence of product IDs")
+    product_ids: conlist(int, min_length=1) = Field(  # type: ignore[valid-type]
+        ...,
+        description="Sequence of product IDs",
+    )
 
 
 class ListResponse(BaseModel):
@@ -117,7 +121,6 @@ class RecommendationController:
             )
 
         response = [
-            ListResponse(sequence=document.sequence, subsequences=document.subsequences)
-            for document in documents
+            ListResponse(sequence=document.sequence, subsequences=document.subsequences) for document in documents
         ]
         return response

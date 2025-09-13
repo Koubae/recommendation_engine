@@ -1,4 +1,4 @@
-from recommendation_engine.app.auth.access_token import JWTAccessTokenAuth, HashLibPasswordHasher
+from recommendation_engine.app.auth.access_token import HashLibPasswordHasher, JWTAccessTokenAuth
 from recommendation_engine.app.auth.exceptions import AuthPasswordInvalid, AuthUsernameInvalid
 from recommendation_engine.app.auth.models import AccessToken
 from recommendation_engine.settings import Settings
@@ -15,10 +15,17 @@ class AuthService:
         self.settings: Settings = Settings.get()
 
     async def login(self, username: str, password: str) -> AccessToken:
-        """
+        """Authenticates a user by their username and password.
+
+        Verifies the provided credentials against the stored administrator
+        credentials and generates an access token if authentication
+        succeeds. Only the administrator account is supported for login.
+
+
         Raises:
-            - AuthUsernameInvalid: If username is incorrect.
-            - AuthPasswordInvalid: If password is incorrect.
+            AuthUsernameInvalid: If the provided username does not match the administrator username.
+            AuthPasswordInvalid: If the provided password does not match the stored password hash for
+                the administrator account.
         """
         admin_username = self.settings.app_admin_username
         if username != admin_username:

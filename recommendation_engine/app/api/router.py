@@ -4,6 +4,7 @@ from recommendation_engine.app.api.controllers.auth import AuthController
 from recommendation_engine.app.api.controllers.index import IndexController
 from recommendation_engine.app.api.controllers.recommendation import RecommendationController
 
+
 __all__ = ("get_router",)
 
 

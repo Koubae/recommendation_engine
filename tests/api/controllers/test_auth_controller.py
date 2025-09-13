@@ -3,8 +3,8 @@ from unittest.mock import AsyncMock, patch
 import pytest
 from fastapi import HTTPException
 
-from recommendation_engine.app.api.controllers.auth import LoginResponse, LoginRequest, AuthController
-from recommendation_engine.app.auth.exceptions import AuthUsernameInvalid, AuthPasswordInvalid
+from recommendation_engine.app.api.controllers.auth import AuthController, LoginRequest, LoginResponse
+from recommendation_engine.app.auth.exceptions import AuthPasswordInvalid, AuthUsernameInvalid
 
 
 @pytest.mark.unit
