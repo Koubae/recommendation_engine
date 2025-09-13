@@ -38,3 +38,6 @@ def restrict():
         return access_token
 
     return _
+
+
+LoggedIn = restrict()

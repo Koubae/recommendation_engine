@@ -2,11 +2,11 @@ import logging
 from datetime import datetime
 
 from bson import ObjectId
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field, conlist
 
 from recommendation_engine.app.auth.models import AccessToken
-from recommendation_engine.app.auth.secure import restrict
+from recommendation_engine.app.auth.secure import LoggedIn
 from recommendation_engine.app.providers import RecommendationRepositorySingleton
 from recommendation_engine.app.recommendation.algorithm import (
     generate_recommendation_subsequences,
@@ -51,32 +51,38 @@ class RecommendationController:
 
     def _register_routes(self) -> None:
         self.router.add_api_route(path="/{recommendation_id}", endpoint=self.show, methods=["GET"])
-        self.router.add_api_route(path="/", endpoint=self.create, methods=["POST"])
+        self.router.add_api_route(path="/", endpoint=self.create, methods=["POST"], status_code=status.HTTP_201_CREATED)
         self.router.add_api_route(path="/", endpoint=self.list, methods=["GET"])
 
     @staticmethod
     async def show(
         recommendation_id: str,
         repository: RecommendationRepositorySingleton,
-        _: AccessToken = Depends(restrict()),
+        _: AccessToken = Depends(LoggedIn),
     ) -> RecommendationModel:
         if not ObjectId.is_valid(recommendation_id):
-            raise HTTPException(status_code=400, detail="Invalid ID format")
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid ID format")
 
         try:
             document = await repository.get(recommendation_id)
         except RecommendationRepositoryException as _:
-            raise HTTPException(status_code=500, detail="Unexpected error, please try again later...")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Unexpected error, please try again later...",
+            )
 
         if not document:
-            raise HTTPException(status_code=404, detail=f"Recommendation subsequence of {recommendation_id} not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Recommendation subsequence of {recommendation_id} not found",
+            )
         return document
 
     @staticmethod
     async def create(
         payload: CreateRequest,
         repository: RecommendationRepositorySingleton,
-        _: AccessToken = Depends(restrict()),
+        _: AccessToken = Depends(LoggedIn),
     ) -> RecommendationModel:
         unique_ordered_product_ids, recommendations = generate_recommendation_subsequences(payload.product_ids)
         fingerprint = generate_product_ids_fingerprint(unique_ordered_product_ids)
@@ -85,11 +91,14 @@ class RecommendationController:
             document = await repository.create(fingerprint, unique_ordered_product_ids, recommendations)
         except RecommendationDuplicate as _:
             raise HTTPException(
-                status_code=409,
+                status_code=status.HTTP_409_CONFLICT,
                 detail=f"Product_ids {unique_ordered_product_ids} (fingerprint={fingerprint}) Already exists",
             )
-        except RecommendationRepositoryException as error:
-            raise HTTPException(status_code=500, detail="Unexpected error, please try again later...")
+        except RecommendationRepositoryException as _:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Unexpected error, please try again later...",
+            )
 
         logger.info(f"Created recommendation document: {document}, sequence: {unique_ordered_product_ids}")
         return document
@@ -97,12 +106,15 @@ class RecommendationController:
     @staticmethod
     async def list(
         repository: RecommendationRepositorySingleton,
-        _: AccessToken = Depends(restrict()),
+        _: AccessToken = Depends(LoggedIn),
     ) -> list[ListResponse]:
         try:
             documents = await repository.paginate(limit=10)
         except RecommendationRepositoryException as _:
-            raise HTTPException(status_code=500, detail="Unexpected error, please try again later...")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Unexpected error, please try again later...",
+            )
 
         response = [
             ListResponse(sequence=document.sequence, subsequences=document.subsequences)
