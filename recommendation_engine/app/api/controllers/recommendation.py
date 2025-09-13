@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 
+from bson import ObjectId
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field, conlist
 
@@ -49,11 +50,18 @@ class RecommendationController:
         recommendation_id: str,
         repository: RecommendationRepositorySingleton,
         _: AccessToken = Depends(restrict()),
-    ) -> dict:
-        print("show", recommendation_id)
-        res = await repository.db.command("ping")
+    ) -> RecommendationModel:
+        if not ObjectId.is_valid(recommendation_id):
+            raise HTTPException(status_code=400, detail="Invalid ID format")
 
-        return {"dummy": "OK", "ping": res}
+        try:
+            document = await repository.get(recommendation_id)
+        except RecommendationRepositoryException as _:
+            raise HTTPException(status_code=500, detail="Unexpected error, please try again later...")
+
+        if not document:
+            raise HTTPException(status_code=404, detail=f"Recommendation subsequence of {recommendation_id} not found")
+        return document
 
     @staticmethod
     async def create(
@@ -72,7 +80,6 @@ class RecommendationController:
                 detail=f"Product_ids {unique_ordered_product_ids} (fingerprint={fingerprint}) Already exists",
             )
         except RecommendationRepositoryException as error:
-            logger.error(f"Exception while creating recommendation document: {repr(error)}")
             raise HTTPException(status_code=500, detail="Unexpected error, please try again later...")
 
         logger.info(f"Created recommendation document: {document}, sequence: {unique_ordered_product_ids}")

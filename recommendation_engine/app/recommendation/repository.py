@@ -3,8 +3,9 @@ import logging
 import typing as t
 from datetime import datetime, timezone
 
+from bson import ObjectId
 from pymongo import ASCENDING, DESCENDING
-from pymongo.errors import WriteError, DuplicateKeyError
+from pymongo.errors import WriteError, DuplicateKeyError, PyMongoError
 
 from recommendation_engine.app.core.database.repository_base import RepositoryBase
 from recommendation_engine.app.recommendation.models import RecommendationModel
@@ -55,6 +56,17 @@ class RecommendationRepository(RepositoryBase):
             "additionalProperties": False
         }
     }
+
+    async def get(self, object_id: str) -> RecommendationModel | None:
+        try:
+            document = await self.collection.find_one({"_id": ObjectId(object_id)})
+        except PyMongoError as error:
+            logger.error(f"Exception while getting document {object_id}, error: {repr(error)}")
+            raise RecommendationRepositoryException("PyMongoError while getting document")
+
+        if not document:
+            return None
+        return RecommendationModel(**document)
 
     async def create(
         self,
