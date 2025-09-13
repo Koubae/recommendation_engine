@@ -1,2 +1,3 @@
-type TProductIdsOrderedAndUnique = tuple[int, ...] | list[int]
+type TProductIdsOrderedAndUnique = list[int]
 type TRecommendationSubSequences = list[list[int]]
+type TProductIdsFingerPrint = str

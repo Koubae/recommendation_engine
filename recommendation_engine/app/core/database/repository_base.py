@@ -1,6 +1,7 @@
 import typing as t
 from abc import ABC
 
+from pymongo.asynchronous.collection import AsyncCollection
 from pymongo.asynchronous.database import AsyncDatabase
 
 from recommendation_engine.app.core.database.database_client_base import DatabaseClientBase
@@ -17,3 +18,7 @@ class RepositoryBase(ABC):
     @property
     def db(self) -> AsyncDatabase:
         return self._database_client.db
+
+    @property
+    def collection(self) -> AsyncCollection:
+        return self.db[self.COLLECTION_NAME]
