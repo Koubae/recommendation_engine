@@ -20,8 +20,22 @@ generate_certificates:
 # --------------------------
 # Run (docker)
 # --------------------------
+up:
+	@docker compose up recommendation-app
+
 down:
-	@docker compose down
+	@docker compose down recommendation-app
+
+down-v:
+	@docker compose down -v recommendation-app
+
+build:
+	@echo 'Building images ...🛠️'
+	@docker compose build recommendation-app
+
+docker-app-interactive:
+	@docker compose run --rm recommendation-app bash
+
 
 # ////////////////////
 #		DB -- MongoDB

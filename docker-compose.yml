@@ -1,4 +1,22 @@
 services:
+  recommendation-app:
+    container_name: recommendation-app
+    build:
+      context: .
+      target: development
+      dockerfile: Dockerfile
+    networks:
+      - recommendation-engine-network
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./recommendation_engine:/app/recommendation_engine
+    environment:
+      DB_MONGO_HOST: mongo
+    depends_on:
+      - db-mongodb-dashboard
+    entrypoint: uvicorn
+    command: recommendation_engine.main:app --host 0.0.0.0 --port 8000 --reload
 
   mongo:
     image: mongo:7
