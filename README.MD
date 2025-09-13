@@ -13,8 +13,33 @@ _Recommendation Engine is a Python API with MongoDB_
 - Linux/macOS or [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) on Windows
 - [GNU Make](https://www.gnu.org/software/make/)
 
+Run the following (wait a few seconds to bring everything up and build)
+
 ```bash
 make quickstart
+# or if you have issues with App using docker
+make quickstart-local
+```
+
+Go to http://127.0.0.1:8000
+
+The quickstart should have brought up MongoDB and up running at http://127.0.0.1:8000 also it should have
+created some test data.
+
+Run this script to create an access token and request list API
+
+```bash
+make script-list-recommendations
+```
+
+Also, you can use the Postman collection [API_V1.postman_collection.json](./API_V1.postman_collection.json),
+you need to first send a login request which will inject the access_token to the collection and then you can use
+The Recommendations api.
+
+**Stop**
+
+```bash
+make down
 ```
 
 #### Application

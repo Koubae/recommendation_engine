@@ -9,6 +9,7 @@ from recommendation_engine.app.auth.exceptions import AuthAccessTokenExpired, Au
 from recommendation_engine.app.auth.models import AccessToken
 from recommendation_engine.app.providers import provide_access_token_auth
 
+
 security = HTTPBearer()
 
 

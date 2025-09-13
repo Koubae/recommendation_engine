@@ -4,7 +4,8 @@ VENV := .venv
 ENV_RUNNER ?= uv
 SRC := recommendation_engine
 
-quickstart: init-venv docker-mongo-up run
+quickstart: init-venv docker-mongo-up-d up-d wait script-create-recommendations
+quickstart-local: init-venv docker-mongo-up run
 
 # --------------------------
 # Run (no-docker)
@@ -20,14 +21,34 @@ generate_certificates:
 # --------------------------
 # Run (docker)
 # --------------------------
+up:
+	@docker compose up recommendation-app
+up-d:
+	@docker compose up -d recommendation-app
 down:
 	@docker compose down
+
+down-v:
+	@docker compose down -v recommendation-app
+
+build:
+	@echo 'Building images ...🛠️'
+	@docker compose build recommendation-app
+
+docker-app-interactive:
+	@docker compose run --rm recommendation-app bash
+
+wait:
+	sleep 10
 
 # ////////////////////
 #		DB -- MongoDB
 # ////////////////////
 docker-mongo-up:
 	@docker compose up db-mongodb-dashboard
+docker-mongo-up-d:
+	@docker compose up -d db-mongodb-dashboard
+
 docker-mongo-down:
 	@docker compose down db-mongodb-dashboard
 docker-mongo-down-clean-up:
@@ -94,3 +115,11 @@ test-unit-coverage:
 
 test-integration:
 	@$(ENV_RUNNER) run pytest -m integration
+
+# --------------------------
+# Scripts
+# --------------------------
+script-create-recommendations:
+	@$(ENV_RUNNER) run python scripts/create_recommendations.py
+script-list-recommendations:
+	@$(ENV_RUNNER) run python scripts/list_recommendations.py
