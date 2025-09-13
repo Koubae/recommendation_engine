@@ -57,17 +57,6 @@ class RecommendationRepository(RepositoryBase):
         }
     }
 
-    async def get(self, object_id: str) -> RecommendationModel | None:
-        try:
-            document = await self.collection.find_one({"_id": ObjectId(object_id)})
-        except PyMongoError as error:
-            logger.error(f"Exception while getting document {object_id}, error: {repr(error)}")
-            raise RecommendationRepositoryException("PyMongoError while getting document")
-
-        if not document:
-            return None
-        return RecommendationModel(**document)
-
     async def create(
         self,
         fingerprint: TProductIdsFingerPrint,
@@ -98,3 +87,14 @@ class RecommendationRepository(RepositoryBase):
 
         document_model.id = str(result.inserted_id)
         return document_model
+
+    async def get(self, object_id: str) -> RecommendationModel | None:
+        try:
+            document = await self.collection.find_one({"_id": ObjectId(object_id)})
+        except PyMongoError as error:
+            logger.error(f"Exception while getting document {object_id}, error: {repr(error)}")
+            raise RecommendationRepositoryException("PyMongoError while getting document")
+
+        if not document:
+            return None
+        return RecommendationModel(**document)
