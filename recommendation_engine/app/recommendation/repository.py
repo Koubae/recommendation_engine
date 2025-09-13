@@ -98,3 +98,12 @@ class RecommendationRepository(RepositoryBase):
         if not document:
             return None
         return RecommendationModel(**document)
+
+    async def paginate(self, limit: int) -> list[RecommendationModel]:
+        docs = await (
+            self.collection
+            .find()
+            .sort([("createdAt", -1), ("_id", -1)])
+            .limit(limit)
+        ).to_list()
+        return [RecommendationModel(**d) for d in docs]

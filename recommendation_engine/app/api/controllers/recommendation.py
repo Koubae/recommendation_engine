@@ -17,7 +17,11 @@ from recommendation_engine.app.recommendation.repository import (
     RecommendationRepositoryException,
     RecommendationDuplicate,
 )
-from recommendation_engine.app.recommendation.types import TProductIdsFingerPrint
+from recommendation_engine.app.recommendation.types import (
+    TProductIdsFingerPrint,
+    TProductIdsOrderedAndUnique,
+    TRecommendationSubSequences,
+)
 from recommendation_engine.settings import Settings
 
 logger = logging.getLogger(__name__)
@@ -25,6 +29,11 @@ logger = logging.getLogger(__name__)
 
 class CreateRequest(BaseModel):
     product_ids: conlist(int, min_length=1) = Field(..., description="Sequence of product IDs")
+
+
+class ListResponse(BaseModel):
+    sequence: TProductIdsOrderedAndUnique
+    subsequences: TRecommendationSubSequences
 
 
 class RecommendationResponse(BaseModel):
@@ -89,8 +98,14 @@ class RecommendationController:
     async def list(
         repository: RecommendationRepositorySingleton,
         _: AccessToken = Depends(restrict()),
-    ) -> dict:
-        print("LIST")
-        res = await repository.db.command("ping")
+    ) -> list[ListResponse]:
+        try:
+            documents = await repository.paginate(limit=10)
+        except RecommendationRepositoryException as _:
+            raise HTTPException(status_code=500, detail="Unexpected error, please try again later...")
 
-        return {"dummy": "OK", "ping": res}
+        response = [
+            ListResponse(sequence=document.sequence, subsequences=document.subsequences)
+            for document in documents
+        ]
+        return response
