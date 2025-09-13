@@ -1,8 +1,28 @@
+import json
+import logging
 import typing as t
+from datetime import datetime, timezone
 
 from pymongo import ASCENDING, DESCENDING
+from pymongo.errors import WriteError, DuplicateKeyError
 
 from recommendation_engine.app.core.database.repository_base import RepositoryBase
+from recommendation_engine.app.recommendation.models import RecommendationModel
+from recommendation_engine.app.recommendation.types import (
+    TProductIdsOrderedAndUnique,
+    TRecommendationSubSequences,
+    TProductIdsFingerPrint,
+)
+
+logger = logging.getLogger(__name__)
+
+
+class RecommendationRepositoryException(Exception):
+    pass
+
+
+class RecommendationDuplicate(RecommendationRepositoryException):
+    pass
 
 
 class RecommendationRepository(RepositoryBase):
@@ -14,15 +34,16 @@ class RecommendationRepository(RepositoryBase):
     COLLECTION_VALIDATOR: t.ClassVar[dict[str, t.Any]] = {
         "$jsonSchema": {
             "bsonType"            : "object",
-            "required"            : ["fingerprint", "sequence", "subSequences", "createdAt"],
+            "required"            : ["fingerprint", "sequence", "subsequences", "createdAt"],
             "properties"          : {
+                "_id"         : {"bsonType": "objectId"},
                 "fingerprint" : {"bsonType": "string"},
                 "sequence"    : {
                     "bsonType": "array",
                     "items"   : {"bsonType": "int"},
                     "minItems": 1
                 },
-                "subSequences": {
+                "subsequences": {
                     "bsonType": "array",
                     "items"   : {
                         "bsonType": "array",
@@ -34,3 +55,34 @@ class RecommendationRepository(RepositoryBase):
             "additionalProperties": False
         }
     }
+
+    async def create(
+        self,
+        fingerprint: TProductIdsFingerPrint,
+        product_ids: TProductIdsOrderedAndUnique,
+        recommendations: TRecommendationSubSequences,
+    ) -> RecommendationModel:
+        document_model = RecommendationModel(
+            fingerprint=fingerprint,
+            sequence=product_ids,
+            subsequences=recommendations,
+            createdAt=datetime.now(timezone.utc),
+        )
+
+        document_serialized = document_model.model_dump(by_alias=True, exclude={"id", "_id"})
+
+        try:
+            result = await self.collection.insert_one(document_serialized)
+        except DuplicateKeyError as error:
+            logger.debug(
+                f"Product_ids {product_ids} (fingerprint={fingerprint}) Already exists\nError: {repr(error)}",
+            )
+            raise RecommendationDuplicate("Document already exists.")
+        except WriteError as error:
+            logger.error(
+                f"Exception while inserting document: \n{json.dumps(document_serialized, indent=4, default=str)}\nError: {repr(error)}",
+            )
+            raise RecommendationRepositoryException("WriteError while inserting document")
+
+        document_model.id = str(result.inserted_id)
+        return document_model

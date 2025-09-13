@@ -1,6 +1,12 @@
+import hashlib
+import json
 from itertools import combinations
 
-from recommendation_engine.app.recommendation.types import TProductIdsOrderedAndUnique, TRecommendationSubSequences
+from recommendation_engine.app.recommendation.types import (
+    TProductIdsOrderedAndUnique,
+    TRecommendationSubSequences,
+    TProductIdsFingerPrint,
+)
 
 
 def generate_recommendation_subsequences(
@@ -32,3 +38,12 @@ def generate_recommendation_subsequences(
         sequences_iter = combinations(unique_ordered_product_ids, sequence_length)
         subsequences.extend([list(sequence) for sequence in sequences_iter])
     return unique_ordered_product_ids, subsequences
+
+
+def generate_product_ids_fingerprint(product_ids: TProductIdsOrderedAndUnique) -> TProductIdsFingerPrint:
+    """Creates a unique hash for a sequence of product IDs.
+
+    The product_ids passed should be sorted and unique.
+    """
+    product_ids_serialized = json.dumps(product_ids, separators=(",", ":"))
+    return hashlib.sha1(product_ids_serialized.encode("utf-8")).hexdigest()

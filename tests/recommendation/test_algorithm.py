@@ -1,6 +1,9 @@
 import pytest
 
-from recommendation_engine.app.recommendation.algorithm import generate_recommendation_subsequences
+from recommendation_engine.app.recommendation.algorithm import (
+    generate_recommendation_subsequences,
+    generate_product_ids_fingerprint,
+)
 from tests.data.recommendation_sequences_samples import RECOMMENDATIONS_SEQUENCES_SAMPLES
 
 
@@ -71,3 +74,9 @@ class TestUnitRecommendationAlgorithms:
 
         assert unique_ordered_product_ids == []
         assert recommendations == []
+
+    def test_generate_product_ids_fingerprint(self):
+        product_ids = [1, 2, 3]
+        fingerprint = generate_product_ids_fingerprint(product_ids)
+
+        assert fingerprint == "9ef50cc82ae474279fb8e82896142702bccbb33a"
