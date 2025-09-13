@@ -9,6 +9,10 @@ from recommendation_engine.app.auth.exceptions import (
 )
 
 
+class SettingsLoadException(Exception):
+    pass
+
+
 @dataclass(frozen=True)
 class Settings:
     """Singleton Instance for Application settings"""
@@ -32,6 +36,18 @@ class Settings:
     app_admin_username: str
     app_admin_password_hash: str
 
+    # ||||||||||||||||
+    # Database
+    # ||||||||||||||||
+    db_mongo_host: str
+    db_mongo_port: int
+    db_mongo_username: str
+    db_mongo_password: str
+    db_mongo_db_name: str
+
+    db_mongo_min_pool_size: int
+    db_mongo_max_pool_size: int
+
     # Auth
     cert_private_file_name: str | None = field(repr=False)
     cert_public_file_name: str | None = field(repr=False)
@@ -42,6 +58,19 @@ class Settings:
     @classmethod
     def get(cls) -> "Settings":
         if cls._singleton is None:
+
+            db_mongo_host = os.getenv("DB_MONGO_HOST", None)
+            db_mongo_port = int(os.getenv("DB_MONGO_PORT", None))
+            db_mongo_username = os.getenv("DB_MONGO_USERNAME", None)
+            db_mongo_password = os.getenv("DB_MONGO_PASSWORD", None)
+
+            db_mongo_db_name = os.getenv("DB_MONGO_DB_NAME", None)
+            if not all([db_mongo_host, db_mongo_port, db_mongo_username, db_mongo_password, db_mongo_db_name]):
+                raise SettingsLoadException("Database settings not found")
+
+            db_mongo_min_pool_size = int(os.getenv("DB_MONGO_MIN_POOL_SIZE", 0))
+            db_mongo_max_pool_size = int(os.getenv("DB_MONGO_MAX_POOL_SIZE", 20))
+
             cert_private_file_name = os.getenv("APP_CERT_PRIVATE_FILE_NAME", None)
             cert_public_file_name = os.getenv("APP_CERT_PUBLIC_FILE_NAME", None)
             if not cert_private_file_name or not cert_public_file_name:
@@ -65,6 +94,14 @@ class Settings:
                 app_version=os.getenv("APP_VERSION", "undefined"),
                 app_api_cors_allowed_domains=tuple(os.environ.get("APP_API_CORS_ALLOWED_DOMAINS", "").split(",")),
                 app_jwt_expiration_hours=app_jwt_expiration_hours,
+
+                db_mongo_host=db_mongo_host,
+                db_mongo_port=db_mongo_port,
+                db_mongo_username=db_mongo_username,
+                db_mongo_password=db_mongo_password,
+                db_mongo_db_name=db_mongo_db_name,
+                db_mongo_min_pool_size=db_mongo_min_pool_size,
+                db_mongo_max_pool_size=db_mongo_max_pool_size,
 
                 app_admin_username=app_admin_username,
                 app_admin_password_hash=app_admin_password_hash,

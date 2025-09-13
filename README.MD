@@ -92,3 +92,9 @@ make tests
 # Unit with HTML coverage
 make test-unit-coverage
 ```
+
+Further Reading
+===============
+
+* [MongoDB -- Time Series Data](https://www.mongodb.com/docs/languages/python/pymongo-driver/current/data-formats/time-series/#std-label-pymongo-time-series)
+* [MongoDB -- Capped Collections](https://www.mongodb.com/docs/manual/core/capped-collections/)
